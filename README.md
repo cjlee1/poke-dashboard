@@ -2,6 +2,8 @@
 
 ## Quick Start
 
+Use `node v20.19.x`
+
 ```bash
 # Install dependencies
 npm install
@@ -38,10 +40,11 @@ src/
 
 ## Next Steps
 
-1. Explore the PokéAPI structure in the browser dev tools
-2. Replace the sample visualization with your charts
-3. Add filtering and interactivity
-4. Style it to match your vision!
+1. Start by reading the [ASSIGNMENT.md](ASSIGNMENT.MD)
+2. Fork this repo to your own github account
+3. Create a new branch for your updates
+4. Complete the assignment in no more than 4 hours (try not to go overboard!)
+5. When you're done, make sure your repo is public so we can review it. Either tag @theonlymikeever in a PR review or send us the link!
 
 ## Helpful Resources
 
