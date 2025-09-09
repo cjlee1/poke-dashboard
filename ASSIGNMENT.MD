@@ -70,7 +70,7 @@ We'll be looking at:
 
 ## Getting Started
 We recommend starting with:
-1. Set up your development environment by **forking this repo** to your github account
+1. Set up your development environment by **cloning this repo** locally and changing the remote origin url to your own repo via `git remote set-url origin http://github.com/YOU/YOUR_REPO` (replacing `/YOU/YOU_REPO` with a public repo in your GH)
 2. Explore the PokéAPI to understand the data structure
 3. Build basic data fetching functionality
 4. Create your first visualization
