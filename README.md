@@ -41,7 +41,7 @@ src/
 ## Next Steps
 
 1. Start by reading the [ASSIGNMENT.md](ASSIGNMENT.MD)
-2. Fork this repo to your own github account
+2. Clone this repo locally and change the remote origin url to your own repo via `git remote set-url origin http://github.com/YOU/YOUR_REPO` (replacing `/YOU/YOU_REPO` with a public repo in your GH)
 3. Create a new branch for your updates
 4. Complete the assignment in no more than 4 hours (try not to go overboard!)
 5. When you're done, make sure your repo is public so we can review it. Either tag @theonlymikeever in a PR review or send us the link!
