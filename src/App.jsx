@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import pokemonApi from "./services/pokemonApi";
 import TypeDistributionChart from "./components/TypeDistributionChart";
 import StatsRadarChart from "./components/StatsRadarChart";
+import PokemonFilter from "./components/PokemonFilter";
+import PokemonGrid from "./components/PokemonGrid";
 import "./App.css";
 
 function App() {
@@ -10,7 +12,21 @@ function App() {
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState(null);
   const [selectedPokemon, setSelectedPokemon] = useState([]);
+  const [selectedType, setSelectedType] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
+  // Get unique types
+  const types = [...new Set(pokemonData.flatMap((p) => p.types))].sort();
+
+  // Filter Pokemon
+  const filteredPokemon = pokemonData.filter((pokemon) => {
+    const matchesType = !selectedType || pokemon.types.includes(selectedType);
+    const matchesSearch =
+      !searchTerm ||
+      pokemon.name.includes(searchTerm.toLowerCase()) ||
+      pokemon.id.toString() === searchTerm;
+    return matchesType && matchesSearch;
+  });
   const handlePokemonSelect = (pokemon) => {
     setSelectedPokemon((prev) => {
       const isSelected = prev.find((p) => p.id === pokemon.id);
@@ -84,7 +100,13 @@ function App() {
   return (
     <div className="container">
       <h1>Pokemon Analytics Dashboard</h1>
-
+ <PokemonFilter
+          types={types}
+          selectedType={selectedType}
+          onTypeChange={setSelectedType}
+          search={searchTerm}
+          onSearchChange={setSearchTerm}
+        />
       <div className="charts-grid">
         <div className="chart-card">
           <div className="chart-controls">
@@ -95,13 +117,23 @@ function App() {
             pokemonData={pokemonData}
             chartType={chartType}
           />
-          <div className="chart-card">
+         
+        </div>
+         <div className="chart-card">
             <StatsRadarChart
               pokemonData={pokemonData}
               selectedPokemon={selectedPokemon}
             />
           </div>
-        </div>
+      </div>
+      <div className="chart-card">
+       
+
+        <PokemonGrid
+          pokemonData={filteredPokemon.slice(0, 151)} // Limit display
+          selectedPokemon={selectedPokemon}
+          onPokemonSelect={handlePokemonSelect}
+        />
       </div>
     </div>
   );
