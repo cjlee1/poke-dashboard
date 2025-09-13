@@ -1,15 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import pokemonApi from './services/pokemonApi';
-import TypeDistributionChart from './components/TypeDistributionChart';
-
-import './App.css';
+import React, { useState, useEffect } from "react";
+import pokemonApi from "./services/pokemonApi";
+import TypeDistributionChart from "./components/TypeDistributionChart";
+import StatsRadarChart from "./components/StatsRadarChart";
+import "./App.css";
 
 function App() {
   const [pokemonData, setPokemonData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState(null);
-const [chartType, setChartType] = useState('bar');
+  const [selectedPokemon, setSelectedPokemon] = useState([]);
+
+  const handlePokemonSelect = (pokemon) => {
+    setSelectedPokemon((prev) => {
+      const isSelected = prev.find((p) => p.id === pokemon.id);
+      if (isSelected) {
+        return prev.filter((p) => p.id !== pokemon.id);
+      }
+      if (prev.length >= 3) {
+        return [...prev.slice(1), pokemon];
+      }
+      return [...prev, pokemon];
+    });
+  };
+  const [chartType, setChartType] = useState("bar");
 
   useEffect(() => {
     loadPokemonData();
@@ -19,29 +33,27 @@ const [chartType, setChartType] = useState('bar');
     try {
       setLoading(true);
       const list = await pokemonApi.getPokemonList(151);
-      
+
       // Batch fetch to avoid rate limiting
       const allPokemon = [];
       const batchSize = 20;
-      
+
       for (let i = 0; i < list.length; i += batchSize) {
         const batch = list.slice(i, i + batchSize);
-        const promises = batch.map(p => 
-          pokemonApi.getPokemonDetails(p.name)
-        );
+        const promises = batch.map((p) => pokemonApi.getPokemonDetails(p.name));
         const results = await Promise.all(promises);
         allPokemon.push(...results);
         setProgress(Math.round((allPokemon.length / 151) * 100));
       }
-      
+
       setPokemonData(allPokemon);
     } catch (err) {
-      setError('Failed to load Pokemon data');
+      setError("Failed to load Pokemon data");
     } finally {
       setLoading(false);
     }
   };
-  console.log(pokemonData)
+  console.log(pokemonData);
 
   if (loading) {
     return (
@@ -56,7 +68,7 @@ const [chartType, setChartType] = useState('bar');
     );
   }
 
-    if (error) {
+  if (error) {
     return (
       <div className="container">
         <div className="header">
@@ -70,22 +82,28 @@ const [chartType, setChartType] = useState('bar');
   }
 
   return (
-   <div className="container">
-    <h1>Pokemon Analytics Dashboard</h1>
-    
-    <div className="charts-grid">
-      <div className="chart-card">
-        <div className="chart-controls">
-          <button onClick={() => setChartType('bar')}>Bar</button>
-          <button onClick={() => setChartType('pie')}>Pie</button>
+    <div className="container">
+      <h1>Pokemon Analytics Dashboard</h1>
+
+      <div className="charts-grid">
+        <div className="chart-card">
+          <div className="chart-controls">
+            <button onClick={() => setChartType("bar")}>Bar</button>
+            <button onClick={() => setChartType("pie")}>Pie</button>
+          </div>
+          <TypeDistributionChart
+            pokemonData={pokemonData}
+            chartType={chartType}
+          />
+          <div className="chart-card">
+            <StatsRadarChart
+              pokemonData={pokemonData}
+              selectedPokemon={selectedPokemon}
+            />
+          </div>
         </div>
-        <TypeDistributionChart 
-          pokemonData={pokemonData} 
-          chartType={chartType}
-        />
       </div>
     </div>
-  </div>
   );
 }
 
