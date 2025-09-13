@@ -39,3 +39,41 @@ h1 {
   justify-content: center;
   transition: width 0.3s ease;
 }
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.chart-card {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.chart-container {
+  height: 400px;
+  position: relative;
+}
+
+.chart-controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.chart-controls button {
+  padding: 8px 16px;
+  border: none;
+  background: #667eea;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.chart-controls button:hover {
+  background: #5a67d8;
+}

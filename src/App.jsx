@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import pokemonApi from './services/pokemonApi';
+import TypeDistributionChart from './components/TypeDistributionChart';
+
 import './App.css';
 
 function App() {
@@ -7,6 +9,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState(null);
+const [chartType, setChartType] = useState('bar');
 
   useEffect(() => {
     loadPokemonData();
@@ -67,10 +70,22 @@ function App() {
   }
 
   return (
-    <div className="container">
-      <h1>Pokemon Analytics Dashboard</h1>
-      <p>Loaded {pokemonData.length} Pokemon</p>
+   <div className="container">
+    <h1>Pokemon Analytics Dashboard</h1>
+    
+    <div className="charts-grid">
+      <div className="chart-card">
+        <div className="chart-controls">
+          <button onClick={() => setChartType('bar')}>Bar</button>
+          <button onClick={() => setChartType('pie')}>Pie</button>
+        </div>
+        <TypeDistributionChart 
+          pokemonData={pokemonData} 
+          chartType={chartType}
+        />
+      </div>
     </div>
+  </div>
   );
 }
 
