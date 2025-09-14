@@ -4,6 +4,7 @@ import TypeDistributionChart from "./components/TypeDistributionChart";
 import StatsRadarChart from "./components/StatsRadarChart";
 import PokemonFilter from "./components/PokemonFilter";
 import PokemonGrid from "./components/PokemonGrid";
+import Header from "./components/Header";
 import "./App.css";
 
 function App() {
@@ -72,34 +73,38 @@ function App() {
   console.log(pokemonData);
 
   if (loading) {
-    return (
-      <div className="container">
-        <h1>Loading Pokemon...</h1>
-        <div className="progress-bar">
-          <div className="progress" style={{ width: `${progress}%` }}>
-            {progress}%
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="container">
-        <div className="header">
-          <h1>Pokémon Analytics Dashboard</h1>
-          <p>Interactive data visualization and analysis platform</p>
-        </div>
-        <div className="error">{error}</div>
-        <button onClick={loadPokemonData}>Try Again</button>
-      </div>
-    );
-  }
-
   return (
     <div className="container">
-      <h1>Pokemon Analytics Dashboard</h1>
+      <div className="loading-container">
+        <h1>⚡ Pokemon Analytics Dashboard</h1>
+        <div className="loading-spinner"></div>
+        <p>Loading {progress}% of 151 Pokemon...</p>
+        <div className="progress-bar">
+          <div className="progress" style={{ width: `${progress}%` }} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+if (error) {
+  return (
+    <div className="container">
+      <div className="error-container">
+        <h1>❌ Error</h1>
+        <p>{error}</p>
+        <button onClick={loadPokemonData}>Try Again</button>
+      </div>
+    </div>
+  );
+}
+
+  return (
+    <>
+    <Header/>
+    <div className="container">
+      {/* <h1>Pokemon Analytics Dashboard</h1> */}
+    
  <PokemonFilter
           types={types}
           selectedType={selectedType}
@@ -126,7 +131,7 @@ function App() {
             />
           </div>
       </div>
-      <div className="chart-card">
+      {/* <div className="chart-card"> */}
        
 
         <PokemonGrid
@@ -134,8 +139,9 @@ function App() {
           selectedPokemon={selectedPokemon}
           onPokemonSelect={handlePokemonSelect}
         />
-      </div>
+      {/* </div> */}
     </div>
+    </>
   );
 }
 
