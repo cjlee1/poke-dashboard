@@ -1,29 +1,50 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-
-// Example API service - feel free to restructure however you prefer
-const pokemonApi = {
-  baseURL: 'https://pokeapi.co/api/v2',
-
-  // Get basic pokemon list
-  async getPokemonList(limit = 151) {
-    const response = await axios.get(`${this.baseURL}/pokemon?limit=${limit}`);
-    return response.data.results;
-  },
-
-  // Get detailed pokemon data
-  async getPokemonDetails(urlOrName) {
-    const response = await axios.get(
-      typeof urlOrName === 'string' && urlOrName.includes('http') ? urlOrName : `${this.baseURL}/pokemon/${urlOrName}`
-    );
-    return response.data;
-  },
-};
+import React, { useState, useEffect } from "react";
+import pokemonApi from "./services/pokemonApi";
+import TypeDistributionChart from "./components/charts/TypeDistributionChart";
+import StatsRadarChart from "./components/charts/StatsRadarChart";
+import PokemonFilter from "./components/PokemonFilter";
+import PokemonGrid from "./components/PokemonGrid";
+import Header from "./components/Header";
+import StatsSummary from "./components/StatsSummary";
+import "./App.css";
+import HeightWeightChart from "./components/charts/HeightWeightChart";
 
 function App() {
+  
   const [pokemonData, setPokemonData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
   const [error, setError] = useState(null);
+  const [selectedPokemon, setSelectedPokemon] = useState([]);
+  const [selectedType, setSelectedType] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Get unique types
+  const types = [...new Set(pokemonData.flatMap((p) => p.types))].sort();
+
+  // Filter Pokemon and returned matched result to filter pick or input
+  const filteredPokemon = pokemonData.filter((pokemon) => {
+    const matchesType = !selectedType || pokemon.types.includes(selectedType);
+    const matchesSearch =
+      !searchTerm ||
+      pokemon.name.includes(searchTerm.toLowerCase()) ||
+      pokemon.id.toString() === searchTerm;
+    return matchesType && matchesSearch;
+  });
+  // handle pokemon select and select a max of 3
+  const handlePokemonSelect = (pokemon) => {
+    setSelectedPokemon((prev) => {
+      const isSelected = prev.find((p) => p.id === pokemon.id);
+      if (isSelected) {
+        return prev.filter((p) => p.id !== pokemon.id);
+      }
+      if (prev.length >= 3) {
+        return [...prev.slice(1), pokemon];
+      }
+      return [...prev, pokemon];
+    });
+  };
+  const [chartType, setChartType] = useState("bar");
 
   useEffect(() => {
     loadPokemonData();
@@ -32,94 +53,105 @@ function App() {
   const loadPokemonData = async () => {
     try {
       setLoading(true);
-      setError(null);
+      const list = await pokemonApi.getPokemonList(151);
 
-      // Example: Load first 20 Pokemon with details
-      const pokemonList = await pokemonApi.getPokemonList(20);
+      // Batch fetch to avoid rate limiting
+      const allPokemon = [];
+      const batchSize = 20;
 
-      // Fetch detailed data for each Pokemon
-      // Note: Consider implementing batching/caching for better performance
-      const detailedPokemon = await Promise.all(
-        pokemonList.map((pokemon) => pokemonApi.getPokemonDetails(pokemon.url))
-      );
+      for (let i = 0; i < list.length; i += batchSize) {
+        const batch = list.slice(i, i + batchSize);
+        const promises = batch.map((p) => pokemonApi.getPokemonDetails(p.name));
+        const results = await Promise.all(promises);
+        allPokemon.push(...results);
+        setProgress(Math.round((allPokemon.length / 151) * 100));
+      }
 
-      setPokemonData(detailedPokemon);
+      setPokemonData(allPokemon);
     } catch (err) {
-      setError('Failed to load Pokemon data. Please try again.');
-      console.error('Error loading Pokemon data:', err);
+      setError("Failed to load Pokemon data");
     } finally {
       setLoading(false);
     }
   };
 
+  // loading state
   if (loading) {
     return (
       <div className="container">
-        <div className="header">
-          <h1>🚀 Pokémon Analytics Dashboard</h1>
-          <p>Interactive data visualization and analysis platform</p>
+        <div className="loading-container">
+          <h1>⚡ Pokemon Analytics Dashboard</h1>
+          <div className="loading-spinner"></div>
+          <p>Loading {progress}% of 151 Pokemon...</p>
+          <div className="progress-bar">
+            <div className="progress" style={{ width: `${progress}%` }} />
+          </div>
         </div>
-        <div className="loading">Loading Pokémon data...</div>
       </div>
     );
   }
 
+  // ERror state if pokemonapi returns an error
   if (error) {
     return (
       <div className="container">
-        <div className="header">
-          <h1>Pokémon Analytics Dashboard</h1>
-          <p>Interactive data visualization and analysis platform</p>
+        <div className="error-container">
+          <h1>❌ Error</h1>
+          <p>{error}</p>
+          <button onClick={loadPokemonData}>Try Again</button>
         </div>
-        <div className="error">{error}</div>
-        <button onClick={loadPokemonData}>Try Again</button>
       </div>
     );
   }
 
   return (
-    <div className="container">
-      <div className="header">
-        <h1>Pokémon Analytics Dashboard</h1>
-        <p>Interactive data visualization and analysis platform</p>
-      </div>
-
-      {/* Sample data display - replace with your visualizations */}
-      <div className="dashboard-grid">
-        <div className="chart-container">
-          <h3 className="chart-title">Data Loaded Successfully!</h3>
-          <p>Found {pokemonData.length} Pokémon</p>
-
-          {/* Example data structure preview */}
-          <details style={{ marginTop: '1rem' }}>
-            <summary>Sample Data Structure (click to expand)</summary>
-            <pre
-              style={{
-                fontSize: '0.8rem',
-                overflow: 'auto',
-                background: '#f8f9fa',
-                padding: '1rem',
-                borderRadius: '4px',
-                marginTop: '0.5rem',
-              }}
-            >
-              {JSON.stringify(pokemonData[0], null, 2)}
-            </pre>
-          </details>
+    <>
+      <Header />
+      <div className="container">
+        <StatsSummary
+          filteredPokemon={filteredPokemon}
+          types={types}
+          selectedPokemon={selectedPokemon}
+        />
+        <PokemonFilter
+          types={types}
+          selectedType={selectedType}
+          onTypeChange={setSelectedType}
+          search={searchTerm}
+          onSearchChange={setSearchTerm}
+        />
+        <div className="charts-grid">
+          <div className="chart-card">
+            <div className="chart-controls">
+              <button onClick={() => setChartType("bar")}>Bar</button>
+              <button onClick={() => setChartType("pie")}>Pie</button>
+            </div>
+            <TypeDistributionChart
+              pokemonData={filteredPokemon}
+              chartType={chartType}
+            />
+          </div>
+          <div className="chart-card">
+            <StatsRadarChart
+              pokemonData={filteredPokemon}
+              selectedPokemon={selectedPokemon}
+            />
+          </div>
         </div>
 
-        <div className="chart-container">
-          <h3 className="chart-title">Your Visualization Here</h3>
-          <p>Replace this with your charts and interactive components</p>
-          <ul style={{ marginTop: '1rem', listStyle: 'inside' }}>
-            <li>Chart.js is already included</li>
-            <li>Axios for API calls</li>
-            <li>Basic responsive CSS provided</li>
-            <li>Error handling scaffolded</li>
-          </ul>
+        <div className="chart-card full-width">
+          <HeightWeightChart
+            pokemonData={filteredPokemon}
+          />
         </div>
+
+        <PokemonGrid
+          pokemonData={filteredPokemon.slice(0, 151)} // Limit display
+          selectedPokemon={selectedPokemon}
+          onPokemonSelect={handlePokemonSelect}
+        />
       </div>
-    </div>
+    </>
   );
 }
 
