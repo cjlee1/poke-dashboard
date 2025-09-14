@@ -117,4 +117,5 @@ I kept things intentionally light due to time constraints:
 - undo or cancel pokemon selections 
 - use typescript for better type safety
 - use more custom hooks for pokemon data and filtering pokemon 
+- also use tailwindCSS to make css more uniform and clean
 - also i think it be cool to add a visualization to show pokemon evolution or most poopular pokemon based of web results but i guess thats not in pokeapi ahha
