@@ -2,6 +2,7 @@ import React from 'react';
 import { useTheme } from '../context/ThemeContext';
 import './Header.css';
 
+// header of pokemon analytics daashboard and also container button to switch dark or light mode
 const Header=() => {
   const { theme, toggleTheme } = useTheme();
 

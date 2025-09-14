@@ -1,5 +1,6 @@
 import React from 'react';
 
+// show collection of pokemon in a grid format and also on pokemon select will select pokemon in scatter chart
 function PokemonGrid({ pokemonData, selectedPokemon, onPokemonSelect }) {
   return (
     <div className="pokemon-grid">

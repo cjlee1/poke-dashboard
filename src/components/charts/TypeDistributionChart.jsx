@@ -20,9 +20,9 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
+// create a type distribution chart of different pokemon types and also changeable to pie or bar chart
 function TypeDistributionChart({ pokemonData, chartType = 'bar' }) {
-  // Calculate type distribution
+  // Calculate type distribution and create chart from distribution
   const typeCount = {};
   pokemonData.forEach(pokemon => {
     pokemon.types.forEach(type => {

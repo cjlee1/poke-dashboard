@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import pokemonApi from "./services/pokemonApi";
-import TypeDistributionChart from "./components/TypeDistributionChart";
-import StatsRadarChart from "./components/StatsRadarChart";
+import TypeDistributionChart from "./components/charts/TypeDistributionChart";
+import StatsRadarChart from "./components/charts/StatsRadarChart";
 import PokemonFilter from "./components/PokemonFilter";
 import PokemonGrid from "./components/PokemonGrid";
 import Header from "./components/Header";
@@ -9,6 +9,7 @@ import StatsSummary from "./components/StatsSummary";
 import "./App.css";
 
 function App() {
+  
   const [pokemonData, setPokemonData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -20,7 +21,7 @@ function App() {
   // Get unique types
   const types = [...new Set(pokemonData.flatMap((p) => p.types))].sort();
 
-  // Filter Pokemon
+  // Filter Pokemon and returned matched result to filter pick or input
   const filteredPokemon = pokemonData.filter((pokemon) => {
     const matchesType = !selectedType || pokemon.types.includes(selectedType);
     const matchesSearch =
@@ -29,6 +30,7 @@ function App() {
       pokemon.id.toString() === searchTerm;
     return matchesType && matchesSearch;
   });
+  // handle pokemon select and select a max of 3
   const handlePokemonSelect = (pokemon) => {
     setSelectedPokemon((prev) => {
       const isSelected = prev.find((p) => p.id === pokemon.id);
@@ -71,8 +73,8 @@ function App() {
       setLoading(false);
     }
   };
-  console.log(pokemonData);
 
+  // loading state
   if (loading) {
     return (
       <div className="container">
@@ -88,6 +90,7 @@ function App() {
     );
   }
 
+  // ERror state if pokemonapi returns an error
   if (error) {
     return (
       <div className="container">
@@ -104,7 +107,6 @@ function App() {
     <>
       <Header />
       <div className="container">
-        {/* <h1>Pokemon Analytics Dashboard</h1> */}
         <StatsSummary
           filteredPokemon={filteredPokemon}
           types={types}
@@ -135,14 +137,12 @@ function App() {
             />
           </div>
         </div>
-        {/* <div className="chart-card"> */}
 
         <PokemonGrid
           pokemonData={filteredPokemon.slice(0, 151)} // Limit display
           selectedPokemon={selectedPokemon}
           onPokemonSelect={handlePokemonSelect}
         />
-        {/* </div> */}
       </div>
     </>
   );

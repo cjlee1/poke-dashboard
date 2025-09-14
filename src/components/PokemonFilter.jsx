@@ -1,5 +1,6 @@
 import React from 'react';
 
+// filter to change type of pokemon and also search thru cached results of pokemon data
 function PokemonFilter({ types, selectedType, onTypeChange, search, onSearchChange }) {
   return (
     <div className="filter-container">

@@ -2,12 +2,15 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 
 const ThemeContext = createContext(undefined);
 
+
+// create a context for theme for application+
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
     const savedTheme = localStorage.getItem('theme');
     return savedTheme || 'light';
   });
 
+  // add or remove theme from local storage
   useEffect(() => {
     const root = window.document.documentElement;
     root.classList.remove('light', 'dark');
