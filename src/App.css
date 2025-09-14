@@ -288,3 +288,37 @@ h1 {
   outline: none;
   border-color: var(--accent);
 }
+
+.loading-container,
+.error-container {
+  background: white;
+  border-radius: 10px;
+  padding: 40px;
+  text-align: center;
+  margin-top: 50px;
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-container button {
+  padding: 10px 20px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
