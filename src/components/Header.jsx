@@ -2,7 +2,7 @@ import React from 'react';
 import { useTheme } from '../context/ThemeContext';
 import './Header.css';
 
-const Header:React.FC=() => {
+const Header=() => {
   const { theme, toggleTheme } = useTheme();
 
   return (

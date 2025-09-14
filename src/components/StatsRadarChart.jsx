@@ -93,11 +93,13 @@ function StatsRadarChart({ pokemonData, selectedPokemon }) {
   return (
     <div className="chart-container">
       <Radar data={data} options={options} />
+      <div>
       {selectedPokemon.length === 0 && (
-        <p style={{ textAlign: 'center', marginTop: '10px' }}>
+          <p className="chart-hint">
           Click on Pokemon below to compare stats
         </p>
       )}
+      </div>
     </div>
   );
 }

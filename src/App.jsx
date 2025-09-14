@@ -5,6 +5,7 @@ import StatsRadarChart from "./components/StatsRadarChart";
 import PokemonFilter from "./components/PokemonFilter";
 import PokemonGrid from "./components/PokemonGrid";
 import Header from "./components/Header";
+import StatsSummary from "./components/StatsSummary";
 import "./App.css";
 
 function App() {
@@ -73,74 +74,76 @@ function App() {
   console.log(pokemonData);
 
   if (loading) {
-  return (
-    <div className="container">
-      <div className="loading-container">
-        <h1>⚡ Pokemon Analytics Dashboard</h1>
-        <div className="loading-spinner"></div>
-        <p>Loading {progress}% of 151 Pokemon...</p>
-        <div className="progress-bar">
-          <div className="progress" style={{ width: `${progress}%` }} />
+    return (
+      <div className="container">
+        <div className="loading-container">
+          <h1>⚡ Pokemon Analytics Dashboard</h1>
+          <div className="loading-spinner"></div>
+          <p>Loading {progress}% of 151 Pokemon...</p>
+          <div className="progress-bar">
+            <div className="progress" style={{ width: `${progress}%` }} />
+          </div>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
-if (error) {
-  return (
-    <div className="container">
-      <div className="error-container">
-        <h1>❌ Error</h1>
-        <p>{error}</p>
-        <button onClick={loadPokemonData}>Try Again</button>
+  if (error) {
+    return (
+      <div className="container">
+        <div className="error-container">
+          <h1>❌ Error</h1>
+          <p>{error}</p>
+          <button onClick={loadPokemonData}>Try Again</button>
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
   return (
     <>
-    <Header/>
-    <div className="container">
-      {/* <h1>Pokemon Analytics Dashboard</h1> */}
-    
- <PokemonFilter
+      <Header />
+      <div className="container">
+        {/* <h1>Pokemon Analytics Dashboard</h1> */}
+        <StatsSummary
+          filteredPokemon={filteredPokemon}
+          types={types}
+          selectedPokemon={selectedPokemon}
+        />
+        <PokemonFilter
           types={types}
           selectedType={selectedType}
           onTypeChange={setSelectedType}
           search={searchTerm}
           onSearchChange={setSearchTerm}
         />
-      <div className="charts-grid">
-        <div className="chart-card">
-          <div className="chart-controls">
-            <button onClick={() => setChartType("bar")}>Bar</button>
-            <button onClick={() => setChartType("pie")}>Pie</button>
+        <div className="charts-grid">
+          <div className="chart-card">
+            <div className="chart-controls">
+              <button onClick={() => setChartType("bar")}>Bar</button>
+              <button onClick={() => setChartType("pie")}>Pie</button>
+            </div>
+            <TypeDistributionChart
+              pokemonData={pokemonData}
+              chartType={chartType}
+            />
           </div>
-          <TypeDistributionChart
-            pokemonData={pokemonData}
-            chartType={chartType}
-          />
-         
-        </div>
-         <div className="chart-card">
+          <div className="chart-card">
             <StatsRadarChart
               pokemonData={pokemonData}
               selectedPokemon={selectedPokemon}
             />
           </div>
-      </div>
-      {/* <div className="chart-card"> */}
-       
+        </div>
+        {/* <div className="chart-card"> */}
 
         <PokemonGrid
           pokemonData={filteredPokemon.slice(0, 151)} // Limit display
           selectedPokemon={selectedPokemon}
           onPokemonSelect={handlePokemonSelect}
         />
-      {/* </div> */}
-    </div>
+        {/* </div> */}
+      </div>
     </>
   );
 }
