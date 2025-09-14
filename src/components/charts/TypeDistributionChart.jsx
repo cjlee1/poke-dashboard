@@ -10,6 +10,8 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
+import {  typeColors } from './ChartConstants';
+import { createChartOptions } from './utils';
 
 ChartJS.register(
   CategoryScale,
@@ -35,29 +37,23 @@ function TypeDistributionChart({ pokemonData, chartType = 'bar' }) {
     .sort((a, b) => b[1] - a[1]);
 
   const chartData = {
-    labels: sorted.map(([type]) => type),
+    labels: sorted.map(([type]) => type.charAt(0).toUpperCase() + type.slice(1)),
     datasets: [{
       label: 'Number of Pokemon',
       data: sorted.map(([, count]) => count),
-      backgroundColor: [
-        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
-        '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF',
-        '#4BC0C0', '#FF6384', '#36A2EB', '#FFCE56'
-      ]
+      backgroundColor: sorted.map(([type]) => (typeColors[type] || '#68A090') + '80'),
+      borderColor: sorted.map(([type]) => typeColors[type] || '#68A090'),
+      borderWidth: 1
     }]
   };
 
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    aspectRatio: 1.5, // Prevents overflow on mobile
+  const options = createChartOptions({
     plugins: {
       title: {
-        display: true,
         text: 'Pokemon Type Distribution'
       }
     }
-  };
+  });
 
   return (
     <div className="chart-container">

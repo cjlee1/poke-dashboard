@@ -10,6 +10,8 @@ import {
   Tooltip,
   Legend
 } from 'chart.js';
+import { createChartOptions } from './utils';
+
 
 ChartJS.register(
   RadialLinearScale,
@@ -72,13 +74,9 @@ function StatsRadarChart({ pokemonData, selectedPokemon }) {
     datasets: datasets
   };
 
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    aspectRatio: 1.5, // Prevents overflow on mobile
+  const options = createChartOptions({
     plugins: {
       title: {
-        display: true,
         text: 'Pokemon Stats Comparison'
       }
     },
@@ -88,7 +86,7 @@ function StatsRadarChart({ pokemonData, selectedPokemon }) {
         max: 150
       }
     }
-  };
+  });
 
   return (
     <div className="chart-container">

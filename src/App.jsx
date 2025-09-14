@@ -7,6 +7,7 @@ import PokemonGrid from "./components/PokemonGrid";
 import Header from "./components/Header";
 import StatsSummary from "./components/StatsSummary";
 import "./App.css";
+import HeightWeightChart from "./components/charts/HeightWeightChart";
 
 function App() {
   
@@ -136,6 +137,12 @@ function App() {
               selectedPokemon={selectedPokemon}
             />
           </div>
+        </div>
+
+        <div className="chart-card full-width">
+          <HeightWeightChart
+            pokemonData={filteredPokemon}
+          />
         </div>
 
         <PokemonGrid
