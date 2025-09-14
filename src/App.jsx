@@ -124,13 +124,13 @@ function App() {
               <button onClick={() => setChartType("pie")}>Pie</button>
             </div>
             <TypeDistributionChart
-              pokemonData={pokemonData}
+              pokemonData={filteredPokemon}
               chartType={chartType}
             />
           </div>
           <div className="chart-card">
             <StatsRadarChart
-              pokemonData={pokemonData}
+              pokemonData={filteredPokemon}
               selectedPokemon={selectedPokemon}
             />
           </div>
